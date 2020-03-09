@@ -1,6 +1,8 @@
 import urllib
-
+import matplotlib
+import matplotlib.pyplot as plt
 import requests
+import numpy as np
 
 
 def main():
@@ -35,14 +37,43 @@ def main():
 
     threshold = int(str(threshold))
 
+    # print(dot_plot)
+    # print(type(dot_plot))
+
+    # print(dot_plot)
+
     filtered_dot_plot = filter_dot_plot(window_size, threshold, dot_plot)
+
+    print()
 
     show_filtered_dot_plot(filtered_dot_plot)
 
     # show matrix as a figure
     # title,axes,legends,scale
+    file_name = input("Enter a graph name")
+
+    show_matrix_as_fig(filtered_dot_plot, data_array_first, data_array_second)
 
     # save matrix to a graphical file
+    save_matrix_to_file(filtered_dot_plot, data_array_first, data_array_second, file_name)
+
+
+def show_matrix_as_fig(filtered_dot_plot, data_array_first, data_array_second):
+    plt.title("Dot plot")
+    plt.xlabel(data_array_second)
+    plt.ylabel(data_array_first)
+    H = np.array(filtered_dot_plot)
+    plt.imshow(H)
+    plt.show()
+
+
+def save_matrix_to_file(filtered_dot_plot, data_array_first, data_array_second, file_name):
+    plt.title("Dot plot")
+    plt.xlabel(data_array_second)
+    plt.ylabel(data_array_first)
+    H = np.array(filtered_dot_plot)
+    plt.imshow(H)
+    plt.savefig(file_name + '.png')
 
 
 def show_filtered_dot_plot(filtered_dot_plot):
@@ -52,46 +83,80 @@ def show_filtered_dot_plot(filtered_dot_plot):
         print()
 
 
+def create_matrix_window(dot_plot, window_size, i, j):
+    matrix = [[0 for x1 in range(window_size)] for y1 in range(window_size)]
+    a = 0
+    for x in range(i, i + window_size):
+        b = 0
+        for y in range(j, j + window_size):
+            # print("X, Y: " + str(x) + " " + str(y))
+            # print("A, B: " + str(a) + " " + str(b))
+            # print("matrix: " + str(matrix[a][b]))
+            # print("dot_plot: " + str(dot_plot[x][y]))
+            matrix[a][b] = dot_plot[x][y]
+            b += 1
+        a += 1
+    return matrix
+
+
+def sum_diag(matrix):
+    counter = 0
+    for i in range(len(matrix)):
+        for j in range(len(matrix[i])):
+            if i == j:
+                if matrix[i][j] == 1:
+                    counter += 1
+    return counter
+
+
 def filter_dot_plot(window_size, threshold, dot_plot):
-    filtered_dot_plot = dot_plot
-    window_x = 0
-    window_y = 0
-    window_x_range = window_size
-    window_y_range = window_size
+    filtered_dot_plot = [[0 for x in range(len(dot_plot[0]))] for y in range(len(dot_plot))]
 
-    for i in range(len(dot_plot) - window_size):
-        window_x += i
-        print(window_x)
-        window_x_range += i
-        print(window_x_range)
-        for j in range(len(dot_plot[i]) - window_size):
-            window_y += j
-            print(window_y)
-            window_y_range += j
-            print(window_y_range)
+    # print("len: " + str(len(filtered_dot_plot)))
+    # print("len: " + str(len(filtered_dot_plot[0])))
 
-            counter = 0
+    for i in range(len(dot_plot) - window_size + 1):
+        for j in range(len(dot_plot[i]) - window_size + 1):
+            # window matrix
+            # print("i, j : " + str(i) + " " + str(j))
+            window_matrix = create_matrix_window(dot_plot, window_size, i, j)
+            # [i:i + window_size, j:j + window_size]
+            # print(" window matrix " + str(show_filtered_dot_plot(window_matrix)))
 
-            for window_x in range(window_x_range):
-                for window_y in range(window_y_range):
-                    if window_x == window_y:
-                        if dot_plot[window_x][window_y] == 1:
-                            counter += 1
+            # print("i, j : " + str(i) + " " + str(j))
 
-            if counter >= window_size - threshold:
+            if sum_diag(window_matrix) >= window_size - threshold:
+                # print("============")
+                # show_filtered_dot_plot(filtered_dot_plot)
+                for k in range(len(window_matrix)):
+                    # print("len : " + str(len(window_matrix)))
+                    # print("i, j : " + str(i) + " " + str(j))
+                    # print("k: " + str(k))
+                    # print("window matrix[k][k]: " + str(window_matrix[k][k]))
+                    # print("i, j /+k: " + str(i+k) + " " + str(j+k))
+                    # print("len: " + str(len(filtered_dot_plot[i+k])) + " len2: " + str(len(filtered_dot_plot[j+k])))
+                    # print("len3: " + str(len(filtered_dot_plot)))
+                    # print("len4: " + str(len(filtered_dot_plot[k])))
+                    # print("filtered dot plot: " + str(filtered_dot_plot[i + k][j + k]))
+                    filtered_dot_plot[i + k][j + k] = window_matrix[k][k]
 
-                for window_x in range(window_x_range):
-                    for window_y in range(window_y_range):
-                        if window_x == window_y:
-                            if dot_plot[window_x][window_y] == 1:
-                                filtered_dot_plot[i][j] = 1
-                            else:
-                                filtered_dot_plot[i][j] = 0
-                        else:
-                            filtered_dot_plot[i][j] = 0
+                # print("============")
+
+    # for a1 in range(len(dot_plot)):
+    #     for a2 in range(len(dot_plot[a1])):
+    #         print(dot_plot[a1][a2], end=' ')
+    #     print()
+    #
+    # print()
+    # for a1 in range(len(filtered_dot_plot)):
+    #     for a2 in range(len(filtered_dot_plot[a1])):
+    #         print(filtered_dot_plot[a1][a2], end=' ')
+    #     print()
 
     return filtered_dot_plot
 
+
+###
 
 def show_dot_plot(data_array_first, name_first, data_array_second, name_second, dot_plot):
     print("first sequence:")
