@@ -52,25 +52,28 @@ def main():
     # title,axes,legends,scale
     file_name = input("Enter a graph name")
 
-    show_matrix_as_fig(filtered_dot_plot, data_array_first, data_array_second)
+    show_matrix_as_fig(filtered_dot_plot,description_second, description_first )
 
     # save matrix to a graphical file
-    save_matrix_to_file(filtered_dot_plot, data_array_first, data_array_second, file_name)
+    save_matrix_to_file(filtered_dot_plot, description_second, description_first, file_name)
 
 
-def show_matrix_as_fig(filtered_dot_plot, data_array_first, data_array_second):
+def show_matrix_as_fig(filtered_dot_plot, description_first, description_second):
+    plt.figure()
     plt.title("Dot plot")
-    plt.xlabel(data_array_second)
-    plt.ylabel(data_array_first)
+    plt.xlabel(description_first)
+    plt.ylabel(description_second)
     H = np.array(filtered_dot_plot)
     plt.imshow(H)
     plt.show()
 
 
-def save_matrix_to_file(filtered_dot_plot, data_array_first, data_array_second, file_name):
+def save_matrix_to_file(filtered_dot_plot, description_first, description_second, file_name):
+    plt.figure()
     plt.title("Dot plot")
-    plt.xlabel(data_array_second)
-    plt.ylabel(data_array_first)
+    plt.xlabel(description_first)
+    plt.ylabel(description_second)
+    # plt.legend()
     H = np.array(filtered_dot_plot)
     plt.imshow(H)
     plt.savefig(file_name + '.png')
