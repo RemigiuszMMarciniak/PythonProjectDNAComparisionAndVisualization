@@ -71,6 +71,12 @@ def show_matrix_as_fig(filtered_dot_plot, description_first, description_second)
 def save_matrix_to_file(filtered_dot_plot, description_first, description_second, file_name):
     plt.figure()
     plt.title("Dot plot")
+    description_first = description_first[:30]
+    # print(description_first)
+    description_second = description_second[:30]
+    # print(type(description_second))
+    # print(len(description_second))
+    # print(description_second)
     plt.xlabel(description_first)
     plt.ylabel(description_second)
     # plt.legend()
@@ -255,8 +261,7 @@ def read_file_from_web(url):
 
 
 def select_method():
-    print(
-        "Select how do you want to reach the data: \n1. Insert the data manually. \n2. Read the data from a file. \n3. Read the data from the server")
+    print("Select how do you want to reach the data: \n1. Insert the data manually. \n2. Read the data from a file. \n3. Read the data from the server")
     label = input("select:\n")
     while label != "1" or label != "2" or label != "3":
         if label == "1":
